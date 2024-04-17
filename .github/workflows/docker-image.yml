@@ -38,5 +38,5 @@ jobs:
 
     - name: Update deployment file with new image
       run: |
-        sed -i 's|image: your-old-image|image: your-new-image|g' deployment.yaml
+        sed -i "s|image:.*|image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" deployment.yaml
         cat deployment.yaml
