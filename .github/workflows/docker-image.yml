@@ -23,10 +23,10 @@ jobs:
         aws-region: ap-south-1
 
     - name: Build Docker image
-      run: docker build -t nginx-image .
+      run: docker build -t nginx-sai .
 
     - name: Tag Docker image
-      run: docker tag nginx-image:latest public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
+      run: docker tag nginx-sai:latest public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
 
     - name: Push Docker image to ECR
       run: docker push public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
@@ -36,4 +36,4 @@ jobs:
         sed -i 's|image: your-old-image|image: your-new-image|g' deployment.yaml
         cat deployment.yaml
 
-    
+    # You might need to deploy your Kubernetes manifest here using kubectl apply or any other deployment tool
