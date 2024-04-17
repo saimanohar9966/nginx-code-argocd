@@ -1,0 +1,39 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v2
+      
+    - name: Login to AWS ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry: public.ecr.aws/h1w1i7h3/docker_kubernetes
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Build Docker image
+      run: docker build -t nginx-image .
+
+    - name: Tag Docker image
+      run: docker tag nginx-image:latest public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
+
+    - name: Push Docker image to ECR
+      run: docker push public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
+
+    - name: Update deployment file with new image
+      run: |
+        sed -i 's|image: your-old-image|image: your-new-image|g' deployment.yaml
+        cat deployment.yaml
+
+    
