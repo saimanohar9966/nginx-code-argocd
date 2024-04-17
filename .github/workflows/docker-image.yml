@@ -12,19 +12,12 @@ jobs:
     steps:
     - name: Checkout main branch
       uses: actions/checkout@v2
-      
-    - name: Set up AWS credentials
-      run: aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY && aws configure set region ap-south-1
-
-    - name: Login to AWS ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
 
     - name: Build Docker image
-      run: docker build -t your-image-name .
+      run: docker build -t nginx-sai .
 
     - name: Tag Docker image
-      run: docker tag your-image-name:latest public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
+      run: docker tag nginx-sai:latest public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
 
     - name: Push Docker image to ECR
       run: docker push public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
