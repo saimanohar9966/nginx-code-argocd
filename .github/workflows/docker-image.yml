@@ -1,23 +1,32 @@
-name: Docker Build and Deploy
-
+---
+name: Build and Push Golang Image to AWS ECR
 on:
   push:
-    branches:
-      - main
-
+    branches: [ main ]
 jobs:
-  build-and-deploy:
+  build-and-push:
+    name: Build and Push to ECR
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout main branch
+    - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
     - name: Build Docker image
-      run: docker build -t nginx-sai .
+      run: docker build -t nginx-image .
 
     - name: Tag Docker image
-      run: docker tag nginx-sai:latest public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
+      run: docker tag nginx-image:latest public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
 
     - name: Push Docker image to ECR
       run: docker push public.ecr.aws/h1w1i7h3/docker_kubernetes:latest
@@ -27,4 +36,4 @@ jobs:
         sed -i 's|image: your-old-image|image: your-new-image|g' deployment.yaml
         cat deployment.yaml
 
-    # You might need to deploy your Kubernetes manifest here using kubectl apply or any other deployment tool
+    
