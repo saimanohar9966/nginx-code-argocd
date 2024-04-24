@@ -33,6 +33,10 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Update deployment file with new image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: docker_images_1234
+          IMAGE_TAG: nginx-sai
         run: |
           awk -v registry="$ECR_REGISTRY" -v repo="$ECR_REPOSITORY" -v tag="$IMAGE_TAG" '
             /image:/ {
@@ -40,10 +44,3 @@ jobs:
             }
             { print }
           ' deployment.yaml > deployment.yaml.new && mv deployment.yaml.new deployment.yaml
-      - name: Debug Script
-        run: |
-         echo "ECR_REGISTRY: $ECR_REGISTRY"
-         echo "ECR_REPOSITORY: $ECR_REPOSITORY"
-         echo "IMAGE_TAG: $IMAGE_TAG"
-         cat deployment.yaml
-
