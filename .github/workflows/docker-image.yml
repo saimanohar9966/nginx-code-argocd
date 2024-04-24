@@ -40,3 +40,10 @@ jobs:
             }
             { print }
           ' deployment.yaml > deployment.yaml.new && mv deployment.yaml.new deployment.yaml
+      - name: Debug Script
+        run: |
+         echo "ECR_REGISTRY: $ECR_REGISTRY"
+         echo "ECR_REPOSITORY: $ECR_REPOSITORY"
+         echo "IMAGE_TAG: $IMAGE_TAG"
+         cat deployment.yaml
+
